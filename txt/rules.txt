@@ -1,0 +1,38 @@
+Notations
+On - On(x, y) : x is directly on top of y
+Table - T(x) : for each y: !On(x, y) (x is on the table)
+Empty - E(x) : for each y: !On(y, x) (there is nothing on top of x)
+Atop - A(x, z) : On(x, z) || exists y: (On(x, y) && A(y, z)) (x is above z)
+
+Axioms & properties
+1. x == x
+2. x == y => y == x
+3. x == y && y == z => x == z
+
+4. !On(x, x)
+5. On(x, y) => !On(y, x)
+6. On(x, y) && On(y, z) => !On(x, z)
+
+7. T(x) => for each y: !On(x, y)
+8. for each y: !On(x, y) => T(x)
+
+9. E(x) => for each y: !On(y, x)
+10. for each y: !On(y, x) => E(x)
+
+11. On(x, y) && On(y, z) => y == z
+12. On(u, x) && On(v, x) => u == v
+
+13. On(x, y) && u == x && v == y => On(u, v)
+14. T(x) && u == x => T(u)
+15. E(x) && u == x => E(x)
+
+16. !A(x, x)
+17. A(x, y) => !A(y, x)
+18. A(x, y) && A(y, z) => A(x, z)
+19. A(x, y) && u == x && v == y => A(x, z)
+
+20. A(x, z) => On(x, z) || (On(x, g(x, z)) && A(g(x, z), z))
+21. (On(x, z) || exists y: On(x, y) && A(y, z)) => A(x, z)
+
+22. for each x: (T(x) || exists z: (A(x, z) && T(z)))
+23. for each x: (E(x) || exists u: (A(u, x) && E(u)))
