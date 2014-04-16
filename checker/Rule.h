@@ -15,6 +15,19 @@ public:
     virtual void AddCubesToWorld(World& world) const = 0;
 };
 
+class NegatedRule: public Rule {
+public:
+    NegatedRule(const Rule* rule) :
+            rule(rule) {
+    }
+
+    virtual bool isSatisfied(const Model& model) const;
+    virtual void AddCubesToWorld(World& world) const;
+
+protected:
+    std::shared_ptr<const Rule> (rule);
+};
+
 class OnRule: public Rule {
 public:
     OnRule(const Cube& x, const Cube& y) :

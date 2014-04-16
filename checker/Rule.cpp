@@ -7,7 +7,9 @@ Rule* Rule::buildRule(std::istream& stream) {
 
     std::string first;
     stream >> first;
-    if (first == "On") {
+    if (first == "!") {
+        ret = new NegatedRule(buildRule(stream));
+    } else if (first == "On") {
         int arg1, arg2;
         stream >> arg1 >> arg2;
         ret = new OnRule(arg1, arg2);
@@ -26,6 +28,14 @@ Rule* Rule::buildRule(std::istream& stream) {
     }
 
     return ret;
+}
+
+bool NegatedRule::isSatisfied(const Model& model) const {
+    return !rule->isSatisfied(model);
+}
+
+void NegatedRule::AddCubesToWorld(World& world) const {
+    rule->AddCubesToWorld(world);
 }
 
 void OnRule::AddCubesToWorld(World& world) const {
