@@ -24,7 +24,7 @@ bool bruteForce(const Cube* cubes, unsigned begin, unsigned size,
 
     for (unsigned i = 0; i < size; ++i) {
         Model model = baseModel;
-        model.below[current] = i;
+        model.below[current] = cubes[i];
         if (bruteForce(cubes, begin + 1, size, model)) {
             return true;
         }

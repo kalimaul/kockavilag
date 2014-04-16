@@ -10,19 +10,19 @@ Rule* Rule::buildRule(std::istream& stream) {
     if (first == "!") {
         ret = new NegatedRule(buildRule(stream));
     } else if (first == "On") {
-        int arg1, arg2;
+        Cube arg1, arg2;
         stream >> arg1 >> arg2;
         ret = new OnRule(arg1, arg2);
     } else if (first == "A") {
-        int arg1, arg2;
+        Cube arg1, arg2;
         stream >> arg1 >> arg2;
         ret = new AtopRule(arg1, arg2);
     } else if (first == "T") {
-        int arg1;
+        Cube arg1;
         stream >> arg1;
         ret = new TableRule(arg1);
     } else if (first == "E") {
-        int arg1;
+        Cube arg1;
         stream >> arg1;
         ret = new EmptyRule(arg1);
     }

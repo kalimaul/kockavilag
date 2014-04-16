@@ -7,18 +7,9 @@
 #include <cassert>
 #include <boost/lexical_cast.hpp>
 
-#if false
-class Cube {
-public:
-    Cube(const std::string& name) :
-            name(name) {
-    }
-    const std::string& getName() {
-        return name;
-    }
-protected:
-    std::string name;
-};
+#if true
+typedef std::string Cube;
+const Cube table = "|";
 #else
 typedef int Cube;
 const Cube table = (Cube) -1;
