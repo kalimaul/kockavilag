@@ -11,10 +11,18 @@ Rule* Rule::buildRule(std::istream& stream) {
         int arg1, arg2;
         stream >> arg1 >> arg2;
         ret = new OnRule(arg1, arg2);
+    } else if (first == "A") {
+        int arg1, arg2;
+        stream >> arg1 >> arg2;
+        ret = new AtopRule(arg1, arg2);
     } else if (first == "T") {
         int arg1;
         stream >> arg1;
         ret = new TableRule(arg1);
+    } else if (first == "E") {
+        int arg1;
+        stream >> arg1;
+        ret = new EmptyRule(arg1);
     }
 
     return ret;
@@ -49,4 +57,66 @@ bool TableRule::isSatisfied(const Model& model) const {
     }
 
     return it->second == table;
+}
+
+void EmptyRule::AddCubesToWorld(World& world) const {
+    world.cubes.insert(x);
+}
+
+bool EmptyRule::isSatisfied(const Model& model) const {
+    assert(model.isComplete());
+
+    for (const auto& it : model.below) {
+        if (it.second == x) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void AtopRule::AddCubesToWorld(World& world) const {
+    world.cubes.insert(x);
+    world.cubes.insert(y);
+}
+
+bool AtopRule::isSatisfied(const Model& model) const {
+    assert(model.isComplete());
+
+    Cube current = x;
+    current = model.below.find(current)->second;
+
+    while (current != table && model.below.find(current) != model.below.end()) {
+        if (current == y) {
+            return true;
+        }
+
+        current = model.below.find(current)->second;
+    }
+
+    return false;
+}
+
+Cube AllOnTableAxiom::getBottom(const Cube& from, const Model& model) const {
+    Cube current = from;
+    while (current != table && model.below.find(current) != model.below.end()) {
+        current = model.below.find(current)->second;
+
+        if (current == from) {
+            return from;
+        }
+    }
+
+    return current;
+}
+
+bool AllOnTableAxiom::isSatisfied(const Model& model) const {
+    for (const auto& it : model.below) {
+        Cube bottom = getBottom(it.first, model);
+        if (bottom != table) {
+            return false;
+        }
+    }
+
+    return true;
 }

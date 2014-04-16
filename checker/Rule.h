@@ -39,3 +39,39 @@ public:
 protected:
     Cube x;
 };
+
+class EmptyRule: public Rule {
+public:
+    EmptyRule(const Cube& x) :
+            x(x) {
+    }
+
+    virtual bool isSatisfied(const Model& model) const;
+    virtual void AddCubesToWorld(World& world) const;
+protected:
+    Cube x;
+};
+
+class AtopRule: public Rule {
+public:
+    AtopRule(const Cube& x, const Cube& y) :
+            x(x), y(y) {
+    }
+
+    virtual bool isSatisfied(const Model& model) const;
+    virtual void AddCubesToWorld(World& world) const;
+protected:
+    Cube x;
+    Cube y;
+};
+
+class AllOnTableAxiom: public Rule {
+public:
+    virtual bool isSatisfied(const Model& model) const;
+    virtual void AddCubesToWorld(World& world) const {
+    }
+
+protected:
+    Cube getBottom(const Cube& from, const Model& model) const;
+};
+
