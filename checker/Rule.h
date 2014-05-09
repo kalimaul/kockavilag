@@ -6,8 +6,6 @@ class World;
 
 class Rule {
 public:
-    static Rule* buildRule(std::istream& stream);
-
     virtual ~Rule() {
     }
 
@@ -28,6 +26,19 @@ protected:
     std::shared_ptr<const Rule> (rule);
 };
 
+class AndRule: public Rule {
+public:
+    virtual void addRule(const Rule* rule) {
+        rules.push_back(std::shared_ptr<const Rule>(rule));
+    }
+
+    virtual bool isSatisfied(const Model& model) const;
+    virtual void AddCubesToWorld(World& world) const;
+
+protected:
+    std::list<std::shared_ptr<const Rule>> rules;
+};
+
 class OnRule: public Rule {
 public:
     OnRule(const Cube& x, const Cube& y) :
@@ -41,9 +52,9 @@ protected:
     Cube y;
 };
 
-class TableRule: public Rule {
+class OnTableRule: public Rule {
 public:
-    TableRule(const Cube& x) :
+    OnTableRule(const Cube& x) :
             x(x) {
     }
 
@@ -53,9 +64,9 @@ protected:
     Cube x;
 };
 
-class EmptyRule: public Rule {
+class NothingOnTopRule: public Rule {
 public:
-    EmptyRule(const Cube& x) :
+    NothingOnTopRule(const Cube& x) :
             x(x) {
     }
 
@@ -65,9 +76,9 @@ protected:
     Cube x;
 };
 
-class AtopRule: public Rule {
+class AboveRule: public Rule {
 public:
-    AtopRule(const Cube& x, const Cube& y) :
+    AboveRule(const Cube& x, const Cube& y) :
             x(x), y(y) {
     }
 
@@ -76,15 +87,5 @@ public:
 protected:
     Cube x;
     Cube y;
-};
-
-class AllOnTableAxiom: public Rule {
-public:
-    virtual bool isSatisfied(const Model& model) const;
-    virtual void AddCubesToWorld(World& world) const {
-    }
-
-protected:
-    Cube getBottom(const Cube& from, const Model& model) const;
 };
 

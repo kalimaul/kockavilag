@@ -9,7 +9,7 @@
 
 #if true
 typedef std::string Cube;
-const Cube table = "|";
+//const Cube table = "|";
 #else
 typedef int Cube;
 const Cube table = (Cube) -1;
