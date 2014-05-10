@@ -1,6 +1,6 @@
 #include "Checker.h"
 
-bool bruteForce(const Cube* cubes, unsigned begin, unsigned size,
+CheckerResult bruteForce(const Cube* cubes, unsigned begin, unsigned size,
         const Model& baseModel) {
     if (begin == size) {
         //baseModel.print();
@@ -16,43 +16,42 @@ bool bruteForce(const Cube* cubes, unsigned begin, unsigned size,
     }
 
     if (found) {
-        return true;
+        return baseModel;
     } else if (begin == size) {
-        return false;
-    }
-
-    if (begin == size) {
-        return false;
+        return CheckerResult();
     }
 
     Cube current = cubes[begin];
 
-    if (bruteForce(cubes, begin + 1, size, baseModel)) {
-        return true;
+    CheckerResult res = bruteForce(cubes, begin + 1, size, baseModel);
+    if (res) {
+        return res;
     }
 
     for (unsigned i = 0; i < begin; ++i) {
         {
             Model model = baseModel;
             model.below[current] = cubes[i];
-            if (bruteForce(cubes, begin + 1, size, model)) {
-                return true;
+            CheckerResult res = bruteForce(cubes, begin + 1, size, model);
+            if (res) {
+                return res;
             }
         }
 
         if (baseModel.below.find(cubes[i]) == baseModel.below.end()) {
             Model model = baseModel;
             model.below[cubes[i]] = current;
-            if (bruteForce(cubes, begin + 1, size, model)) {
-                return true;
+            CheckerResult res = bruteForce(cubes, begin + 1, size, model);
+            if (res) {
+                return res;
             }
         }
     }
 
-    return false;
+    return CheckerResult();
 }
 
-bool Check(const World& world) {
+CheckerResult Check(const World& world) {
     std::vector<Cube> cubeList;
     cubeList.insert(cubeList.end(), world.cubes.begin(), world.cubes.end());
     return bruteForce(&cubeList[0], 0, cubeList.size(), Model(world));

@@ -63,8 +63,15 @@ void RunTest(const T& function) {
     World world;
     bool expectedResult = function(world);
     world.addCubesFromRules();
-    bool ok = Check(world) == expectedResult;
-    std::cout << counter++ << ": " << (ok ? "PASS" : "FAIL") << "\n";
+    CheckerResult result = Check(world);
+    bool ok = result == expectedResult;
+    std::cout << counter++ << ": " << (ok ? "PASS" : "FAIL");
+    if (result) {
+        std::cout << ", solution: ";
+        result.result->print();
+    } else {
+        std::cout << "\n";
+    }
 }
 
 void RunAllTests() {
