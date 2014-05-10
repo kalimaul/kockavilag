@@ -58,14 +58,13 @@ void AboveRule::AddCubesToWorld(World& world) const {
 
 bool AboveRule::isSatisfied(const Model& model) const {
     Cube current = x;
-    current = model.below.find(current)->second;
 
     while (model.below.find(current) != model.below.end()) {
+        current = model.below.find(current)->second;
+
         if (current == y) {
             return true;
         }
-
-        current = model.below.find(current)->second;
     }
 
     return false;

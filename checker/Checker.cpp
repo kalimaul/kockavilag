@@ -2,8 +2,10 @@
 
 bool bruteForce(const Cube* cubes, unsigned begin, unsigned size,
         const Model& baseModel) {
-    std::cout << begin << " - " << size << " ";
-    baseModel.print();
+    if (begin == size) {
+        //baseModel.print();
+    }
+
     bool found = true;
 
     for (const auto& rule : baseModel.world.rules) {
@@ -19,17 +21,31 @@ bool bruteForce(const Cube* cubes, unsigned begin, unsigned size,
         return false;
     }
 
+    if (begin == size) {
+        return false;
+    }
+
     Cube current = cubes[begin];
 
     if (bruteForce(cubes, begin + 1, size, baseModel)) {
         return true;
     }
 
-    for (unsigned i = begin; i < size - 1; ++i) {
-        Model model = baseModel;
-        model.below[current] = cubes[i + 1];
-        if (bruteForce(cubes, begin + 1, size, model)) {
-            return true;
+    for (unsigned i = 0; i < begin; ++i) {
+        {
+            Model model = baseModel;
+            model.below[current] = cubes[i];
+            if (bruteForce(cubes, begin + 1, size, model)) {
+                return true;
+            }
+        }
+
+        if (baseModel.below.find(cubes[i]) == baseModel.below.end()) {
+            Model model = baseModel;
+            model.below[cubes[i]] = current;
+            if (bruteForce(cubes, begin + 1, size, model)) {
+                return true;
+            }
         }
     }
 

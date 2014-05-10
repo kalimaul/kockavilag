@@ -3,14 +3,16 @@
 #include <iostream>
 
 void Model::print() const {
-    for (const auto& it : world.cubes) {
-        const auto& mapIt = below.find(it);
-        if (mapIt == below.end()) {
-            std::cout << it << "| ";
+    for (const Cube& it : world.cubes) {
+        if (isOnTop(it)) {
+            Cube current = it;
+            while (!isOnBottom(current)) {
+                std::cout << current;
+                current = *getBelow(current);
+            }
+
+            std::cout << current << "| ";
         }
-    }
-    for (const auto& it : below) {
-        std::cout << it.first << " -> " << it.second << " ";
     }
 
     std::cout << "\n";
@@ -18,4 +20,23 @@ void Model::print() const {
 
 bool Model::isComplete() const {
     return below.size() == world.cubes.size();
+}
+
+const Cube* Model::getBelow(const Cube& cube) const {
+    const auto& it = below.find(cube);
+    if (it == below.end()) {
+        return nullptr;
+    }
+
+    return &it->second;
+}
+
+const Cube* Model::getAbove(const Cube& cube) const {
+    for (const auto& it : below) {
+        if (it.second == cube) {
+            return &it.first;
+        }
+    }
+
+    return nullptr;
 }
