@@ -5,28 +5,21 @@
 
 class World {
 public:
-    World(const std::list<std::shared_ptr<Rule>>& rules) :
-            rules(rules) {
-        addCubesFromRules();
+    void addCubesFromRules();
+
+    void addInputRule(Rule* rule) {
+        inputRules.push_back(std::shared_ptr<Rule>(rule));
     }
 
-    World() {
-    }
-
-    void addCubesFromRules() {
-        for (const auto& rule : rules) {
-            rule->AddCubesToWorld(*this);
-        }
-    }
-
-    void addRule(Rule* rule) {
-        rules.push_back(std::shared_ptr<Rule>(rule));
+    void addOutputRule(Rule* rule) {
+        outputRules.push_back(std::shared_ptr<Rule>(rule));
     }
 
     void addCube(const Cube& cube) {
-        cubes.insert(cube);
+        cubes.push_back(cube);
     }
 
-    std::list<std::shared_ptr<Rule>> rules;
-    std::set<Cube> cubes;
+    std::list<std::shared_ptr<Rule>> inputRules;
+    std::list<std::shared_ptr<Rule>> outputRules;
+    std::vector<Cube> cubes;
 };

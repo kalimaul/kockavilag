@@ -2,6 +2,26 @@
 #include "World.h"
 #include <iostream>
 
+bool Model::areInputRulesSatisfied() const {
+    for (const auto& rule : world.inputRules) {
+        if (!rule->isSatisfied(*this)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Model::areOutputRulesSatisfied() const {
+    for (const auto& rule : world.outputRules) {
+        if (!rule->isSatisfied(*this)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void Model::print() const {
     for (const Cube& it : world.cubes) {
         if (isOnTop(it)) {
@@ -16,10 +36,6 @@ void Model::print() const {
     }
 
     std::cout << "\n";
-}
-
-bool Model::isComplete() const {
-    return below.size() == world.cubes.size();
 }
 
 const Cube* Model::getBelow(const Cube& cube) const {

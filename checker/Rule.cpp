@@ -11,49 +11,38 @@ void NegatedRule::AddCubesToWorld(World& world) const {
 }
 
 void OnRule::AddCubesToWorld(World& world) const {
-    world.cubes.insert(x);
-    world.cubes.insert(y);
+    world.addCube(x);
+    world.addCube(y);
 }
 
 bool OnRule::isSatisfied(const Model& model) const {
-    const auto& it = model.below.find(x);
-    if (it == model.below.end()) {
+    const Cube* cube = model.getBelow(x);
+    if (!cube) {
         return false;
     }
 
-    return it->second == y;
+    return *cube == y;
 }
 
 void OnTableRule::AddCubesToWorld(World& world) const {
-    world.cubes.insert(x);
+    world.addCube(x);
 }
 
 bool OnTableRule::isSatisfied(const Model& model) const {
-    const auto& it = model.below.find(x);
-    if (it != model.below.end()) {
-        return false;
-    }
-
-    return true;
+    return model.getBelow(x) == nullptr;
 }
 
 void NothingOnTopRule::AddCubesToWorld(World& world) const {
-    world.cubes.insert(x);
+    world.addCube(x);
 }
 
 bool NothingOnTopRule::isSatisfied(const Model& model) const {
-    for (const auto& it : model.below) {
-        if (it.second == x) {
-            return false;
-        }
-    }
-
-    return true;
+    return model.getAbove(x) == nullptr;
 }
 
 void AboveRule::AddCubesToWorld(World& world) const {
-    world.cubes.insert(x);
-    world.cubes.insert(y);
+    world.addCube(x);
+    world.addCube(y);
 }
 
 bool AboveRule::isSatisfied(const Model& model) const {

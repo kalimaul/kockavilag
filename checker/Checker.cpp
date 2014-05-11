@@ -1,58 +1,38 @@
 #include "Checker.h"
 
-CheckerResult bruteForce(const Cube* cubes, unsigned begin, unsigned size,
-        const Model& baseModel) {
-    if (begin == size) {
+void bruteForce(unsigned currentCube, const Model& baseModel, CheckerResult& result) {
+    if (currentCube == baseModel.world.cubes.size()) {
+        ++result.steps;
         //baseModel.print();
-    }
 
-    bool found = true;
-
-    for (const auto& rule : baseModel.world.rules) {
-        if (!rule->isSatisfied(baseModel)) {
-            found = false;
-            break;
+        bool found = baseModel.isProof();
+        if (!found && !result.counterExample.get()) {
+            result.counterExample.reset(new Model(baseModel));
         }
-    }
+    } else {
+        bruteForce(currentCube + 1, baseModel, result);
 
-    if (found) {
-        return baseModel;
-    } else if (begin == size) {
-        return CheckerResult();
-    }
+        Cube current = baseModel.world.cubes[currentCube];
 
-    Cube current = cubes[begin];
-
-    CheckerResult res = bruteForce(cubes, begin + 1, size, baseModel);
-    if (res) {
-        return res;
-    }
-
-    for (unsigned i = 0; i < begin; ++i) {
-        {
-            Model model = baseModel;
-            model.below[current] = cubes[i];
-            CheckerResult res = bruteForce(cubes, begin + 1, size, model);
-            if (res) {
-                return res;
+        for (unsigned i = 0; i < currentCube; ++i) {
+            {
+                Model model = baseModel;
+                model.below[current] = baseModel.world.cubes[i];
+                bruteForce(currentCube + 1, model, result);
             }
-        }
 
-        if (baseModel.below.find(cubes[i]) == baseModel.below.end()) {
-            Model model = baseModel;
-            model.below[cubes[i]] = current;
-            CheckerResult res = bruteForce(cubes, begin + 1, size, model);
-            if (res) {
-                return res;
+            if (baseModel.below.find(baseModel.world.cubes[i]) == baseModel.below.end()) {
+                Model model = baseModel;
+                model.below[baseModel.world.cubes[i]] = current;
+                bruteForce(currentCube + 1, model, result);
             }
         }
     }
-
-    return CheckerResult();
 }
 
 CheckerResult Check(const World& world) {
-    std::vector<Cube> cubeList;
-    cubeList.insert(cubeList.end(), world.cubes.begin(), world.cubes.end());
-    return bruteForce(&cubeList[0], 0, cubeList.size(), Model(world));
+    CheckerResult res;
+    bruteForce(0, Model(world), res);
+    return res;
 }
+

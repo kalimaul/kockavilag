@@ -10,6 +10,13 @@ public:
             world(world) {
     }
 
+    bool areInputRulesSatisfied() const;
+    bool areOutputRulesSatisfied() const;
+
+    bool isProof() const {
+        return !areInputRulesSatisfied() || areOutputRulesSatisfied();
+    }
+
     void print() const;
 
     const Cube* getBelow(const Cube& cube) const;
@@ -24,6 +31,5 @@ public:
     }
 
     std::map<Cube, Cube> below;
-    bool isComplete() const;
     const World& world;
 };
