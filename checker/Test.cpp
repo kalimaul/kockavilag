@@ -35,10 +35,24 @@ void RunTest(const T& function) {
     std::cout << "\n";
 }
 
+
+void SizeTest() {
+    for (unsigned i = 0; i < 6; ++i) {
+        World world;
+        for (unsigned j = 0; j < i; ++j) {
+            world.addCube(BaseCube::AsCube(boost::lexical_cast<std::string>(j)));
+        }
+        CheckerResult result = Check(world);
+        std::cout << "World of size " << i << " -> "<< result.steps << " steps.\n";
+    }
+}
+
 void RunAllTests() {
     for (TestFunction tf : tests) {
         RunTest(tf);
     }
+
+    SizeTest();
 }
 
 #define TOKENPASTE(x, y) x ## y
@@ -104,3 +118,4 @@ TEST(
         IN(new OnTableRule(SYMBOL("Y")))
         OUT(new NegatedRule(new OnRule(CUBE("B"), CUBE("D")))),
         true)
+
