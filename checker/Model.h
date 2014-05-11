@@ -27,8 +27,10 @@ public:
         return getAbove(cube) == nullptr;
     }
 
+    // TODO slow backwards lookup, switch to bimap
     std::map<Cube, Cube> below;
     const World& world;
 
+    // TODO store this somewhere else
     mutable std::shared_ptr<Interpretation> invalidInterpretation;
 };

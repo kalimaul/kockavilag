@@ -20,6 +20,7 @@ bool Model::checkProof(unsigned currentSymbol, const Interpretation& interpretat
     } else {
         for (unsigned i = 0; i < world.cubes.size(); ++i) {
             bool existingInterp = false;
+            // TODO don't generate these invalid permutations
             for (const auto& it : interpretation.cubes) {
                 if (it.second == world.cubes[i]) {
                     existingInterp = true;
