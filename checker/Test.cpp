@@ -30,9 +30,9 @@ void RunTest(const T& function) {
     if (!result.isProven()) {
         std::cout << ", counter example: ";
         result.counterExample->print();
-    } else {
-        std::cout << "\n";
     }
+
+    std::cout << "\n";
 }
 
 void RunAllTests() {
@@ -52,47 +52,55 @@ bool TOKENPASTE2(Test, L) (World& world) { \
     TestHolder TOKENPASTE2(t, L) ( TOKENPASTE2(Test,L) );
 
 #define TEST(fun, ret) TESTL(__LINE__, fun, ret)
-#define CUBE(x) world.addCube(x);
+#define CUBE(x) BaseCube::AsCube(x)
+#define SYMBOL(x) BaseCube::AsSymbol(x)
 #define IN(x) world.addInputRule(x);
 #define OUT(x) world.addOutputRule(x);
-
-TEST(CUBE("A") CUBE("B"), true)
-TEST(IN(new OnRule("A", "B")) OUT(new OnRule("A", "B")), true)
-TEST(IN(new AboveRule("A", "B")) OUT(new OnRule("A", "B")), true)
 
 
 /// BEGIN TESTING
 
-
 TEST(
-        IN(new OnRule("B", "C"))
-        IN(new OnRule("A", "B"))
-        OUT(new AboveRule("A", "C")),
+        IN(new OnRule(CUBE("B"), CUBE("C")))
+        IN(new OnRule(CUBE("A"), CUBE("B")))
+        OUT(new AboveRule(CUBE("A"), CUBE("C"))),
         true)
 TEST(
-        IN(new OnRule("A", "B"))
-        IN(new OnRule("B", "A"))
-        OUT(new OnRule("A", "B"))
-        OUT(new OnRule("B", "A")),
+        IN(new OnRule(CUBE("A"), CUBE("B")))
+        IN(new OnRule(CUBE("B"), CUBE("A")))
+        OUT(new OnRule(CUBE("A"), CUBE("B")))
+        OUT(new OnRule(CUBE("B"), CUBE("A"))),
         true)
 
 TEST(
-        IN(new OnRule("A", "B"))
-        IN(new OnRule("B", "C"))
-        IN(new OnRule("C", "D"))
-        OUT(new AboveRule("D", "A")),
+        IN(new OnRule(CUBE("A"), CUBE("B")))
+        IN(new OnRule(CUBE("B"), CUBE("C")))
+        IN(new OnRule(CUBE("C"), CUBE("D")))
+        OUT(new AboveRule(CUBE("D"), CUBE("A"))),
         false)
 
 TEST(
-        CUBE("B")
-        CUBE("A");
-        IN(new OnRule("B", "A"))
-        OUT(new OnTableRule("A")),
+        IN(new OnRule(CUBE("B"), CUBE("A")))
+        OUT(new OnTableRule(CUBE("A"))),
         true)
 
 TEST(
-        IN(new OnTableRule("B"))
-        IN(new NegatedRule(new OnTableRule("A")))
-        OUT(new OnRule("A", "B")),
+        IN(new OnTableRule(CUBE("B")))
+        IN(new NegatedRule(new OnTableRule(CUBE("A"))))
+        OUT(new OnRule(CUBE("A"), CUBE("B"))),
         true)
 
+TEST(
+        IN(new OnTableRule(SYMBOL("X")))
+        IN(new OnRule(CUBE("A"), CUBE("B")))
+        OUT(new OnRule(CUBE("A"), SYMBOL("X"))),
+        true)
+
+TEST(
+        IN(new OnTableRule(CUBE("A")))
+        IN(new NothingOnTopRule(CUBE("B")))
+        IN(new NegatedRule(new NothingOnTopRule(CUBE("C"))))
+        IN(new OnTableRule(SYMBOL("X")))
+        IN(new OnTableRule(SYMBOL("Y")))
+        OUT(new NegatedRule(new OnRule(CUBE("B"), CUBE("D")))),
+        true)

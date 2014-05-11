@@ -1,28 +1,54 @@
-#include "Model.h"
-#include "World.h"
 #include <iostream>
 
-bool Model::areInputRulesSatisfied() const {
-    for (const auto& rule : world.inputRules) {
-        if (!rule->isSatisfied(*this)) {
-            return false;
-        }
-    }
+#include "Model.h"
+#include "World.h"
+#include "Interpretation.h"
 
-    return true;
+bool Model::checkProof(unsigned currentSymbol, const Interpretation& interpretation) const {
+    if (currentSymbol == world.symbols.size()) {
+#if 0
+        this->print();
+        interpretation.print();
+        std::cout << "\n";
+#endif
+        bool good = !interpretation.areInputRulesSatisfied() || interpretation.areOutputRulesSatisfied();
+        if (!good && !invalidInterpretation.get()) {
+            invalidInterpretation.reset(new Interpretation(interpretation));
+        }
+
+        return good;
+    } else {
+        for (unsigned i = 0; i < world.cubes.size(); ++i) {
+            bool existingInterp = false;
+            for (const auto& it : interpretation.cubes) {
+                if (it.second == world.cubes[i]) {
+                    existingInterp = true;
+                    break;
+                }
+            }
+
+            if (!existingInterp) {
+                Interpretation newInterp = interpretation;
+                newInterp.cubes[world.symbols[currentSymbol]] = world.cubes[i];
+                bool ret = checkProof(currentSymbol + 1, newInterp);
+
+                if (!ret) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
 
-bool Model::areOutputRulesSatisfied() const {
-    for (const auto& rule : world.outputRules) {
-        if (!rule->isSatisfied(*this)) {
-            return false;
-        }
-    }
-
-    return true;
+bool Model::isProof() const {
+    Interpretation beginInterp(*this);
+    return checkProof(0, beginInterp);
 }
 
 void Model::print() const {
+    std::cout << "Model: ";
     for (const Cube& it : world.cubes) {
         if (isOnTop(it)) {
             Cube current = it;
@@ -35,7 +61,10 @@ void Model::print() const {
         }
     }
 
-    std::cout << "\n";
+    if (invalidInterpretation.get()) {
+        std::cout << ", ";
+        invalidInterpretation->print();
+    }
 }
 
 const Cube* Model::getBelow(const Cube& cube) const {

@@ -3,6 +3,7 @@
 #include "Cube.h"
 
 class World;
+class Interpretation;
 
 class Model {
 public:
@@ -10,12 +11,8 @@ public:
             world(world) {
     }
 
-    bool areInputRulesSatisfied() const;
-    bool areOutputRulesSatisfied() const;
-
-    bool isProof() const {
-        return !areInputRulesSatisfied() || areOutputRulesSatisfied();
-    }
+    bool checkProof(unsigned currentSymbol, const Interpretation& interpretation) const;
+    bool isProof() const;
 
     void print() const;
 
@@ -32,4 +29,6 @@ public:
 
     std::map<Cube, Cube> below;
     const World& world;
+
+    mutable std::shared_ptr<Interpretation> invalidInterpretation;
 };

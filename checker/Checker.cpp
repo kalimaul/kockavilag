@@ -17,6 +17,10 @@ void bruteForce(unsigned currentCube, const Model& baseModel, CheckerResult& res
         for (unsigned i = 0; i < currentCube; ++i) {
             {
                 Model model = baseModel;
+                const Cube* above = model.getAbove(baseModel.world.cubes[i]);
+                if (above) {
+                    model.below[*above] = current;
+                }
                 model.below[current] = baseModel.world.cubes[i];
                 bruteForce(currentCube + 1, model, result);
             }
