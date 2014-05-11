@@ -6,63 +6,15 @@
 #include <iostream>
 #include <memory>
 
-bool Test01(World& world) {
-    return true;
-}
+typedef bool (*TestFunction)(World&);
+static std::list<TestFunction> tests;
 
-bool Test02(World& world) {
-    world.addCube("A");
-    return true;
-}
-
-bool Test03(World& world) {
-    world.addCube("A");
-    world.addCube("B");
-    return true;
-}
-
-bool Test04(World& world) {
-    world.addInputRule(new OnRule("A", "B"));
-    world.addOutputRule(new OnRule("A", "B"));
-    return true;
-}
-
-bool Test05(World& world) {
-    world.addInputRule(new AboveRule("A", "B"));
-    world.addOutputRule(new OnRule("A", "B"));
-    return true;
-}
-
-bool Test06(World& world) {
-    world.addInputRule(new OnRule("B", "C"));
-    world.addInputRule(new OnRule("A", "B"));
-    world.addOutputRule(new AboveRule("A", "C"));
-    return true;
-}
-
-bool Test07(World& world) {
-    world.addInputRule(new OnRule("A", "B"));
-    world.addInputRule(new OnRule("B", "A"));
-    world.addOutputRule(new OnRule("A", "B"));
-    world.addOutputRule(new OnRule("B", "A"));
-    return true;
-}
-
-bool Test08(World& world) {
-    world.addInputRule(new OnRule("A", "B"));
-    world.addInputRule(new OnRule("B", "C"));
-    world.addInputRule(new OnRule("C", "D"));
-    world.addOutputRule(new AboveRule("D", "A"));
-    return false;
-}
-
-bool Test09(World& world) {
-    world.addCube("B");
-    world.addCube("A");
-    world.addInputRule(new OnRule("B", "A"));
-    world.addOutputRule(new OnTableRule("A"));
-    return true;
-}
+class TestHolder {
+public:
+    TestHolder(TestFunction tf) {
+        tests.push_back(tf);
+    }
+};
 
 static unsigned counter = 1;
 template<class T>
@@ -84,13 +36,63 @@ void RunTest(const T& function) {
 }
 
 void RunAllTests() {
-    RunTest(Test01);
-    RunTest(Test02);
-    RunTest(Test03);
-    RunTest(Test04);
-    RunTest(Test05);
-    RunTest(Test06);
-    RunTest(Test07);
-    RunTest(Test08);
-    RunTest(Test09);
+    for (TestFunction tf : tests) {
+        RunTest(tf);
+    }
 }
+
+#define TOKENPASTE(x, y) x ## y
+#define TOKENPASTE2(x, y) TOKENPASTE(x, y)
+
+#define TESTL(L, fun, ret) \
+bool TOKENPASTE2(Test, L) (World& world) { \
+    fun \
+    return ret; \
+} \
+    TestHolder TOKENPASTE2(t, L) ( TOKENPASTE2(Test,L) );
+
+#define TEST(fun, ret) TESTL(__LINE__, fun, ret)
+#define CUBE(x) world.addCube(x);
+#define IN(x) world.addInputRule(x);
+#define OUT(x) world.addOutputRule(x);
+
+TEST(CUBE("A") CUBE("B"), true)
+TEST(IN(new OnRule("A", "B")) OUT(new OnRule("A", "B")), true)
+TEST(IN(new AboveRule("A", "B")) OUT(new OnRule("A", "B")), true)
+
+
+/// BEGIN TESTING
+
+
+TEST(
+        IN(new OnRule("B", "C"))
+        IN(new OnRule("A", "B"))
+        OUT(new AboveRule("A", "C")),
+        true)
+TEST(
+        IN(new OnRule("A", "B"))
+        IN(new OnRule("B", "A"))
+        OUT(new OnRule("A", "B"))
+        OUT(new OnRule("B", "A")),
+        true)
+
+TEST(
+        IN(new OnRule("A", "B"))
+        IN(new OnRule("B", "C"))
+        IN(new OnRule("C", "D"))
+        OUT(new AboveRule("D", "A")),
+        false)
+
+TEST(
+        CUBE("B")
+        CUBE("A");
+        IN(new OnRule("B", "A"))
+        OUT(new OnTableRule("A")),
+        true)
+
+TEST(
+        IN(new OnTableRule("B"))
+        IN(new NegatedRule(new OnTableRule("A")))
+        OUT(new OnRule("A", "B")),
+        true)
+
