@@ -37,7 +37,7 @@ void RunTest(const T& function) {
 
 
 void SizeTest() {
-    for (unsigned i = 0; i < 6; ++i) {
+    for (unsigned i = 0; i < 5; ++i) {
         World world;
         for (unsigned j = 0; j < i; ++j) {
             world.addCube(BaseCube::AsCube(boost::lexical_cast<std::string>(j)));

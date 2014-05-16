@@ -7,22 +7,30 @@
 #include <cassert>
 #include <boost/lexical_cast.hpp>
 
-typedef std::string Cube;
+typedef unsigned long Cube;
 typedef Cube CubeSymbol;
 
 class Interpretation;
 
+Cube nameToID(const std::string& name);
+std::string IDToName(const Cube& id);
+
 struct BaseCube {
     static BaseCube AsCube(const std::string& name) {
         BaseCube bc;
-        bc.cubeName = name;
+        bc.cubeName = nameToID(name);
         return bc;
     }
 
     static BaseCube AsSymbol(const std::string& name) {
         BaseCube bc;
-        bc.symbolName = name;
+        bc.symbolName = nameToID(name);
         return bc;
+    }
+
+    BaseCube() {
+        cubeName = 0;
+        symbolName = 0;
     }
 
     Cube cubeName;
@@ -30,6 +38,6 @@ struct BaseCube {
 
     Cube getCube(const Interpretation& interpretation) const;
     bool isSymbol() const {
-        return !symbolName.empty();
+        return symbolName != 0;
     }
 };

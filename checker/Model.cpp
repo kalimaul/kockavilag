@@ -54,11 +54,11 @@ void Model::print() const {
         if (isOnTop(it)) {
             Cube current = it;
             while (!isOnBottom(current)) {
-                std::cout << current;
+                std::cout << IDToName(current);
                 current = *getBelow(current);
             }
 
-            std::cout << current << "| ";
+            std::cout << IDToName(current) << "| ";
         }
     }
 

@@ -5,7 +5,7 @@
 void Interpretation::print() const {
     std::cout << "Interpretation: ";
     for (const auto& it : cubes) {
-        std::cout << it.first << " -> " << it.second << " ";
+        std::cout << IDToName(it.first) << " -> " << IDToName(it.second) << " ";
     }
 }
 
