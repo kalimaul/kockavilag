@@ -58,3 +58,15 @@ bool AboveRule::isSatisfied(const Model& model, const Interpretation& interpreta
 
     return false;
 }
+
+void EqualsRule::AddCubesToWorld(World& world) const {
+    world.addCube(x);
+    world.addCube(y);
+}
+
+bool EqualsRule::isSatisfied(const Model& model, const Interpretation& interpretation) const {
+    Cube realX = x.getCube(interpretation);
+    Cube realY = y.getCube(interpretation);
+
+    return realX == realY;
+}

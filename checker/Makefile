@@ -3,11 +3,11 @@ INCS =
 LIBS =
 
 CFLAGS   = $(DEFS) $(INCS) -O2 -Wall
-CXXFLAGS = $(DEFS) $(INCS) -O2 -Wall -std=c++11
+CXXFLAGS = $(DEFS) $(INCS) -O2 -Wall -std=c++11 -fno-rtti
 LDFLAGS  = $(LIBS) -s
 
 CFLAGS_DEBUG   = $(DEFS) $(INCS) -g -Wall -DDEBUG=1
-CXXFLAGS_DEBUG = $(DEFS) $(INCS) -g -Wall -std=c++11 -DDEBUG=1
+CXXFLAGS_DEBUG = $(DEFS) $(INCS) -g -Wall -std=c++11 -DDEBUG=1 -fno-rtti
 LDFLAGS_DEBUG  = $(LIBS)
 
 SRCS = $(wildcard *.c *.cc *.cpp *.cxx)

@@ -76,3 +76,16 @@ protected:
     BaseCube y;
 };
 
+class EqualsRule: public Rule {
+public:
+    EqualsRule(const BaseCube& x, const BaseCube& y) :
+            x(x), y(y) {
+    }
+
+    virtual bool isSatisfied(const Model& model, const Interpretation& interpretation) const;
+    virtual void AddCubesToWorld(World& world) const;
+protected:
+    BaseCube x;
+    BaseCube y;
+};
+
