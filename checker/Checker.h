@@ -19,3 +19,4 @@ public:
 };
 
 CheckerResult Check(const World& world);
+CheckerResult CheckOptimized(const World& world);

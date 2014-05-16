@@ -8,7 +8,7 @@ class Interpretation;
 class Model {
 public:
     Model(const World& world) :
-            world(world) {
+            world(world), fixedCubes(0) {
     }
 
     bool checkProof(unsigned currentSymbol, const Interpretation& interpretation) const;
@@ -30,6 +30,7 @@ public:
     // TODO slow backwards lookup, switch to bimap
     std::map<Cube, Cube> below;
     const World& world;
+    unsigned fixedCubes;
 
     // TODO store this somewhere else
     mutable std::shared_ptr<Interpretation> invalidInterpretation;

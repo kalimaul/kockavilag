@@ -22,7 +22,7 @@ void RunTest(const T& function) {
     World world;
     bool expectedResult = function(world);
     world.addCubesFromRules();
-    CheckerResult result = Check(world);
+    CheckerResult result = CheckOptimized(world);
     bool ok = result.isProven() == expectedResult;
     std::cout << counter++ << ": " << (ok ? "PASS" : "FAIL");
     std::cout << ", steps: " << result.steps;
@@ -37,12 +37,12 @@ void RunTest(const T& function) {
 
 
 void SizeTest() {
-    for (unsigned i = 0; i < 3; ++i) {
+    for (unsigned i = 0; i < 6; ++i) {
         World world;
         for (unsigned j = 0; j < i; ++j) {
             world.addCube(BaseCube::AsCube(boost::lexical_cast<std::string>(j)));
         }
-        CheckerResult result = Check(world);
+        CheckerResult result = CheckOptimized(world);
         std::cout << "World of size " << i << " -> "<< result.steps << " steps.\n";
     }
 }
@@ -66,7 +66,7 @@ void Towers(unsigned n) {
     world.addOutputRule(new EqualsRule(BaseCube::AsSymbol("X0"), BaseCube::AsSymbol("Y1")));
 
     world.addCubesFromRules();
-    CheckerResult result = Check(world);
+    CheckerResult result = CheckOptimized(world);
     std::cout << "Towers " << n  << " -> " << result.steps << " steps, proven: " << result.isProven() << "\n";
 }
 
