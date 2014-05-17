@@ -16,8 +16,23 @@ public:
 
     void print() const;
 
-    const Cube* getBelow(const Cube& cube) const;
-    const Cube* getAbove(const Cube& cube) const;
+    const Cube* getBelow(const Cube& cube) const {
+        const auto& it = below.find(cube);
+        if (it == below.end()) {
+            return nullptr;
+        }
+
+        return &it->second;
+    }
+
+    const Cube* getAbove(const Cube& cube) const {
+        const auto& it = above.find(cube);
+        if (it == above.end()) {
+            return nullptr;
+        }
+
+        return &it->second;
+    }
 
     bool isOnBottom(const Cube& cube) const {
         return getBelow(cube) == nullptr;
@@ -27,11 +42,24 @@ public:
         return getAbove(cube) == nullptr;
     }
 
-    // TODO slow backwards lookup, switch to bimap
-    std::map<Cube, Cube> below;
     const World& world;
     unsigned fixedCubes;
 
     // TODO store this somewhere else
     mutable std::shared_ptr<Interpretation> invalidInterpretation;
+
+    void setBelow(const Cube& x, const Cube& y) {
+        const Cube* aboveC = getAbove(y);
+        if (aboveC) {
+            below[*aboveC] = x;
+            above[x] = *aboveC;
+        }
+
+        above[y] = x;
+        below[x] = y;
+    }
+
+protected:
+    std::map<Cube, Cube> above;
+    std::map<Cube, Cube> below;
 };

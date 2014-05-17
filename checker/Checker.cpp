@@ -21,18 +21,14 @@ void bruteForce(const Model& baseModel, CheckerResult& result) {
         for (unsigned i = 0; i < baseModel.fixedCubes; ++i) {
             {
                 Model model = baseModel;
-                const Cube* above = model.getAbove(baseModel.world.cubes[i]);
-                if (above) {
-                    model.below[*above] = current;
-                }
-                model.below[current] = baseModel.world.cubes[i];
+                model.setBelow(current, baseModel.world.cubes[i]);
                 ++model.fixedCubes;
                 bruteForce(model, result);
             }
 
-            if (baseModel.below.find(baseModel.world.cubes[i]) == baseModel.below.end()) {
+            if (baseModel.isOnBottom(baseModel.world.cubes[i])) {
                 Model model = baseModel;
-                model.below[baseModel.world.cubes[i]] = current;
+                model.setBelow(baseModel.world.cubes[i], current);
                 ++model.fixedCubes;
                 bruteForce(model, result);
             }

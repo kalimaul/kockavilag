@@ -37,7 +37,7 @@ void NothingOnTopRule::AddCubesToWorld(World& world) const {
 }
 
 bool NothingOnTopRule::isSatisfied(const Model& model, const Interpretation& interpretation) const {
-    return model.getAbove(x.getCube(interpretation)) == nullptr;
+    return model.isOnTop(x.getCube(interpretation));
 }
 
 void AboveRule::AddCubesToWorld(World& world) const {
@@ -48,8 +48,8 @@ void AboveRule::AddCubesToWorld(World& world) const {
 bool AboveRule::isSatisfied(const Model& model, const Interpretation& interpretation) const {
     Cube current = x.getCube(interpretation);
 
-    while (model.below.find(current) != model.below.end()) {
-        current = model.below.find(current)->second;
+    while (const Cube* below = model.getBelow(current)) {
+        current = *below;
 
         if (current == y.getCube(interpretation)) {
             return true;

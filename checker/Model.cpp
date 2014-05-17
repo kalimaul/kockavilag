@@ -67,22 +67,3 @@ void Model::print() const {
         invalidInterpretation->print();
     }
 }
-
-const Cube* Model::getBelow(const Cube& cube) const {
-    const auto& it = below.find(cube);
-    if (it == below.end()) {
-        return nullptr;
-    }
-
-    return &it->second;
-}
-
-const Cube* Model::getAbove(const Cube& cube) const {
-    for (const auto& it : below) {
-        if (it.second == cube) {
-            return &it.first;
-        }
-    }
-
-    return nullptr;
-}
