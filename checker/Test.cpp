@@ -71,7 +71,7 @@ void Towers(unsigned n) {
 }
 
 void RunTowers() {
-    for (unsigned i = 2; i < 5; ++i) {
+    for (unsigned i = 2; i < 4; ++i) {
         Towers(i);
     }
 }
