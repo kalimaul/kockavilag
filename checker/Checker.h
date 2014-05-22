@@ -18,5 +18,5 @@ public:
     unsigned steps;
 };
 
-CheckerResult Check(const World& world);
-CheckerResult CheckOptimized(const World& world);
+CheckerResult Check(World& world);
+CheckerResult CheckOptimized(World& world);

@@ -1,19 +1,24 @@
 #include "Checker.h"
+#include "Interpretation.h"
 
-void bruteForce(const Model& baseModel, CheckerResult& result) {
+void checkAllModels(const Model& baseModel, CheckerResult& result, const Interpretation& interpretation) {
     if (baseModel.fixedCubes == baseModel.world.cubes.size()) {
         ++result.steps;
-        //baseModel.print();
+#if 0
+        baseModel.print();
+        std::cout << "\n";
+#endif
 
-        bool found = baseModel.isProof();
+        bool found = baseModel.isProof(interpretation);
         if (!found && !result.counterExample.get()) {
             result.counterExample.reset(new Model(baseModel));
+            result.counterExample->invalidInterpretation.reset(new Interpretation(interpretation));
         }
     } else {
         {
             Model newModel = baseModel;
             ++newModel.fixedCubes;
-            bruteForce(newModel, result);
+            checkAllModels(newModel, result, interpretation);
         }
 
         Cube current = baseModel.world.cubes[baseModel.fixedCubes];
@@ -23,29 +28,50 @@ void bruteForce(const Model& baseModel, CheckerResult& result) {
                 Model model = baseModel;
                 model.setBelow(current, baseModel.world.cubes[i]);
                 ++model.fixedCubes;
-                bruteForce(model, result);
+                checkAllModels(model, result, interpretation);
             }
 
             if (baseModel.isOnBottom(baseModel.world.cubes[i])) {
                 Model model = baseModel;
                 model.setBelow(baseModel.world.cubes[i], current);
                 ++model.fixedCubes;
-                bruteForce(model, result);
+                checkAllModels(model, result, interpretation);
             }
         }
     }
 }
 
-CheckerResult Check(const World& world) {
+void checkAllInterpretations(unsigned currentSymbol, const Model& baseModel, CheckerResult& result,
+        const Interpretation& interpretation) {
+#if 0
+    std::cout << currentSymbol << "\n";
+    interpretation.print();
+    std::cout << "\n";
+#endif
+
+    if (currentSymbol == baseModel.world.symbols.size()) {
+        checkAllModels(baseModel, result, interpretation);
+    } else {
+        for (unsigned i = 0; i < baseModel.world.cubes.size(); ++i) {
+            Interpretation newInterp = interpretation;
+            newInterp.AddSymbol(baseModel.world.symbols[currentSymbol], baseModel.world.cubes[i]);
+            checkAllInterpretations(currentSymbol + 1, baseModel, result, newInterp);
+            if (result.counterExample.get()) {
+                return;
+            }
+        }
+    }
+}
+
+CheckerResult Check(World& world) {
     CheckerResult res;
-    bruteForce(Model(world), res);
+    world.addCubesFromRules();
+    Interpretation interp;
+    checkAllInterpretations(0, Model(world), res, interp);
     return res;
 }
 
-CheckerResult CheckOptimized(const World& world) {
-    CheckerResult res;
-    Model model(world);
-    bruteForce(model, res);
-    return res;
+CheckerResult CheckOptimized(World& world) {
+    return Check(world);
 }
 

@@ -11,8 +11,11 @@ public:
             world(world), fixedCubes(0) {
     }
 
-    bool checkProof(unsigned currentSymbol, const Interpretation& interpretation) const;
-    bool isProof() const;
+    bool areInputRulesSatisfied(const Interpretation& interpretation) const;
+    bool areOutputRulesSatisfied(const Interpretation& interpretation) const;
+    bool isProof(const Interpretation& interpretation) const {
+        return !areInputRulesSatisfied(interpretation) || areOutputRulesSatisfied(interpretation);
+    }
 
     void print() const;
 

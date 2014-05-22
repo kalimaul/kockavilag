@@ -12,5 +12,8 @@ void World::addCubesFromRules() {
 
     std::sort(cubes.begin(), cubes.end());
     cubes.erase(std::unique(cubes.begin(), cubes.end()), cubes.end());
+
+    std::sort(symbols.begin(), symbols.end());
+    symbols.erase(std::unique(symbols.begin(), symbols.end()), symbols.end());
 }
 

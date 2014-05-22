@@ -1,18 +1,22 @@
 #pragma once
 
-#include "Model.h"
+#include "Cube.h"
+#include <map>
 
 class Interpretation {
 public:
-    Interpretation(const Model& model) :
-            model(model) {
-    }
-
-    bool areInputRulesSatisfied() const;
-    bool areOutputRulesSatisfied() const;
-
     void print() const;
 
-    std::map<CubeSymbol, Cube> cubes;
-    const Model& model;
+    void AddSymbol(const CubeSymbol& symbol, const Cube& cube) {
+        symbols[symbol] = cube;
+    }
+
+    bool HasSymbol(const CubeSymbol& symbol) const {
+        return symbols.find(symbol) != symbols.end();
+    }
+protected:
+
+    std::map<CubeSymbol, Cube> symbols;
+
+    friend class BaseCube;
 };

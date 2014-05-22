@@ -4,48 +4,24 @@
 #include "World.h"
 #include "Interpretation.h"
 
-bool Model::checkProof(unsigned currentSymbol, const Interpretation& interpretation) const {
-    if (currentSymbol == world.symbols.size()) {
-#if 0
-        this->print();
-        interpretation.print();
-        std::cout << "\n";
-#endif
-        bool good = !interpretation.areInputRulesSatisfied() || interpretation.areOutputRulesSatisfied();
-        if (!good && !invalidInterpretation.get()) {
-            invalidInterpretation.reset(new Interpretation(interpretation));
+bool Model::areInputRulesSatisfied(const Interpretation& interpretation) const {
+    for (const auto& rule : world.inputRules) {
+        if (!rule->isSatisfied(*this, interpretation)) {
+            return false;
         }
-
-        return good;
-    } else {
-        for (unsigned i = 0; i < world.cubes.size(); ++i) {
-            bool existingInterp = false;
-            // TODO don't generate these invalid permutations
-            for (const auto& it : interpretation.cubes) {
-                if (it.second == world.cubes[i]) {
-                    existingInterp = true;
-                    break;
-                }
-            }
-
-            if (!existingInterp) {
-                Interpretation newInterp = interpretation;
-                newInterp.cubes[world.symbols[currentSymbol]] = world.cubes[i];
-                bool ret = checkProof(currentSymbol + 1, newInterp);
-
-                if (!ret) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
+
+    return true;
 }
 
-bool Model::isProof() const {
-    Interpretation beginInterp(*this);
-    return checkProof(0, beginInterp);
+bool Model::areOutputRulesSatisfied(const Interpretation& interpretation) const {
+    for (const auto& rule : world.outputRules) {
+        if (!rule->isSatisfied(*this, interpretation)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void Model::print() const {

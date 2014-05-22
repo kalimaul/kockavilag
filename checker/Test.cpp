@@ -16,22 +16,24 @@ public:
     }
 };
 
-static unsigned counter = 1;
-template<class T>
-void RunTest(const T& function) {
-    World world;
-    bool expectedResult = function(world);
-    world.addCubesFromRules();
-    CheckerResult result = CheckOptimized(world);
-    bool ok = result.isProven() == expectedResult;
-    std::cout << counter++ << ": " << (ok ? "PASS" : "FAIL");
+void PrintResult(const CheckerResult& result) {
     std::cout << ", steps: " << result.steps;
 
     if (!result.isProven()) {
         std::cout << ", counter example: ";
         result.counterExample->print();
     }
+}
 
+static unsigned counter = 1;
+template<class T>
+void RunTest(const T& function) {
+    World world;
+    bool expectedResult = function(world);
+    CheckerResult result = CheckOptimized(world);
+    bool ok = result.isProven() == expectedResult;
+    std::cout << counter++ << ": " << (ok ? "PASS" : "FAIL");
+    PrintResult(result);
     std::cout << "\n";
 }
 
@@ -43,7 +45,9 @@ void SizeTest() {
             world.addCube(BaseCube::AsCube(boost::lexical_cast<std::string>(j)));
         }
         CheckerResult result = CheckOptimized(world);
-        std::cout << "World of size " << i << " -> "<< result.steps << " steps.\n";
+        std::cout << "World of size " << i;
+        PrintResult(result);
+        std::cout << "\n";
     }
 }
 
@@ -63,15 +67,16 @@ void Towers(unsigned n) {
         world.addInputRule(new OnRule(BaseCube::AsSymbol(std::string("Y") + asNum2), BaseCube::AsSymbol(std::string("Y") + asNum1)));
     }
 
-    world.addOutputRule(new EqualsRule(BaseCube::AsSymbol("X0"), BaseCube::AsSymbol("Y1")));
+    world.addOutputRule(new EqualsRule(BaseCube::AsSymbol("X0"), BaseCube::AsSymbol("Y0")));
 
-    world.addCubesFromRules();
     CheckerResult result = CheckOptimized(world);
-    std::cout << "Towers " << n  << " -> " << result.steps << " steps, proven: " << result.isProven() << "\n";
+    std::cout << "Towers " << n;
+    PrintResult(result);
+    std::cout << "\n";
 }
 
 void RunTowers() {
-    for (unsigned i = 2; i < 4; ++i) {
+    for (unsigned i = 2; i < 3; ++i) {
         Towers(i);
     }
 }
@@ -146,6 +151,7 @@ TEST(
         IN(new NegatedRule(new NothingOnTopRule(CUBE("C"))))
         IN(new OnTableRule(SYMBOL("X")))
         IN(new OnTableRule(SYMBOL("Y")))
+        IN(new NotEqualsRule(SYMBOL("X"), SYMBOL("Y")))
         OUT(new NegatedRule(new OnRule(CUBE("B"), CUBE("D")))),
         true)
 

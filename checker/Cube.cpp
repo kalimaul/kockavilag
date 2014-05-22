@@ -30,7 +30,7 @@ Cube BaseCube::getCube(const Interpretation& interpretation) const {
         return cubeName;
     }
 
-    const auto& it = interpretation.cubes.find(symbolName);
-    assert(it != interpretation.cubes.end());
+    const auto& it = interpretation.symbols.find(symbolName);
+    assert(it != interpretation.symbols.end());
     return it->second;
 }
