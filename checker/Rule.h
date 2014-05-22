@@ -88,17 +88,3 @@ protected:
     BaseCube x;
     BaseCube y;
 };
-
-class NotEqualsRule: public Rule {
-public:
-    NotEqualsRule(const BaseCube& x, const BaseCube& y) :
-            x(x), y(y) {
-    }
-
-    virtual bool isSatisfied(const Model& model, const Interpretation& interpretation) const;
-    virtual void AddCubesToWorld(World& world) const;
-protected:
-    BaseCube x;
-    BaseCube y;
-};
-

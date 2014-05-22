@@ -76,7 +76,7 @@ void Towers(unsigned n) {
 }
 
 void RunTowers() {
-    for (unsigned i = 2; i < 3; ++i) {
+    for (unsigned i = 2; i < 5; ++i) {
         Towers(i);
     }
 }
@@ -151,7 +151,7 @@ TEST(
         IN(new NegatedRule(new NothingOnTopRule(CUBE("C"))))
         IN(new OnTableRule(SYMBOL("X")))
         IN(new OnTableRule(SYMBOL("Y")))
-        IN(new NotEqualsRule(SYMBOL("X"), SYMBOL("Y")))
+        IN(new NegatedRule(new EqualsRule(SYMBOL("X"), SYMBOL("Y"))))
         OUT(new NegatedRule(new OnRule(CUBE("B"), CUBE("D")))),
         true)
 

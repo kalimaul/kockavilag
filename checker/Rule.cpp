@@ -70,15 +70,3 @@ bool EqualsRule::isSatisfied(const Model& model, const Interpretation& interpret
 
     return realX == realY;
 }
-
-void NotEqualsRule::AddCubesToWorld(World& world) const {
-    world.addCube(x);
-    world.addCube(y);
-}
-
-bool NotEqualsRule::isSatisfied(const Model& model, const Interpretation& interpretation) const {
-    Cube realX = x.getCube(interpretation);
-    Cube realY = y.getCube(interpretation);
-
-    return realX != realY;
-}
