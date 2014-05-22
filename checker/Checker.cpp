@@ -31,11 +31,19 @@ void checkAllModels(const Model& baseModel, CheckerResult& result, const Interpr
                 checkAllModels(model, result, interpretation);
             }
 
+            if (result.counterExample.get()) {
+                return;
+            }
+
             if (baseModel.isOnBottom(baseModel.world.cubes[i])) {
                 Model model = baseModel;
                 model.setBelow(baseModel.world.cubes[i], current);
                 ++model.fixedCubes;
                 checkAllModels(model, result, interpretation);
+            }
+
+            if (result.counterExample.get()) {
+                return;
             }
         }
     }
